@@ -24,13 +24,10 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.css",
-              "node_modules/bootstrap/dist/css/bootstrap.min.css"
+              "src/styles.scss"
             ],
             "scripts": [
-              "node_modules/jquery/dist/jquery.min.js",
-              "node_modules/popper.js/dist/umd/popper.min.js",
-              "node_modules/bootstrap/dist/js/bootstrap.min.js"
+  
             ]
           },
           "configurations": {
@@ -120,6 +117,15 @@
           }
         }
       }
-    }},
-  "defaultProject": "quantdefi-app"
+    }
+  },
+  "defaultProject": "quantdefi-app",
+  "schematics": {
+    "@schematics/agular:component": {
+      "styleext": "scss"
+    },
+    "@schematics/angular:component": {
+      "styleext": "scss"
+    }
+  }
 }
