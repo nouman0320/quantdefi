@@ -5,16 +5,16 @@
         <div class="card">
           <div class="card-body">
             <h4>Default Assemblies</h4>
-            <ul>
+            <ul style="list-style:none;">
               <li>Assemblies
-                    <ul>
-                        <li>03 00 00 - Concrete
-                          <ul>03 30 00 - Rebar
-                            <li>Rebar For Beam - Linear</li>
+                    <ul  style="list-style:none;">
+                        <li><i class="fa fa-folder-open mr-2"></i><span style="cursor:pointer;" onclick="alert('folder clicked')">03 00 00 - Concrete</span> <i style="cursor:pointer;" onclick="alert('TEst')" class="fa fa-pencil ml-2"></i>
+                          <ul><i class="fa fa-folder-open mr-2"></i> 03 30 00 - Rebar <i class="fa fa-pencil ml-2"></i>
+                            <li style="list-style:none;"><i class="fa fa-file mr-2"></i> Rebar For Beam - Linear <i class="fa fa-pencil ml-2"></i></li>
                           </ul>
                         </li>
-                        <li>SubFile 2</li>
-                        <li>SubFile 3</li>
+                        <li><i class="fa fa-folder mr-2"></i> Folder 2 <i class="fa fa-pencil ml-2"></i></li>
+                        <li><i class="fa fa-folder mr-2"></i> Folder 3 <i class="fa fa-pencil ml-2"></i></li>
                     </ul>
                   </li>
             </ul>
@@ -63,69 +63,67 @@
             <label for="textareaDescription">Description</label>
             <textarea class="form-control" id="textareaDescription" style="resize: vertical"></textarea>
           </div>
-          <button type="submit" class="btn btn-success mr-2">Submit</button>
-          <button class="btn btn-light">Cancel</button>
+
+          <div class="row m-3 flex-grow">
+
+            <button type="submit" class="btn btn-success btn-sm m-1 col-sm-3 col-md-3 col-lg-2">Add<i class="mdi mdi-plus"></i></button>
+            <button class="btn btn-success btn-sm m-1 col-sm-3 col-md-3 col-lg-2">Save</button>
+            <button class="btn btn-primary btn-sm m-1 col-sm-3 col-md-3 col-lg-2">Save as</button>
+            <button class="btn btn-light m-1 btn-sm col-sm-3 col-md-3 col-lg-2">Cancel</button>
+            <button class="btn btn-danger btn-sm m-1 col-sm-3 col-md-3 col-lg-2">Delete</button>
+
+          </div>
         </form>
+
+        
+        
+
       </div>
     </div>
   </div>
-  <div class="col-md-6 grid-margin stretch-card">
+  <div class="col-md-12 grid-margin stretch-card">
     <div class="card">
       <div class="card-body">
-        <h4 class="card-title">Coloured select box</h4>
-        <p class="card-description">
-          Basic bootstrap select in theme colors
-        </p>
-        <div class="form-group">
-          <label for="exampleSelectPrimary">Primary</label>
-          <select class="form-control border-primary" id="exampleSelectPrimary">
-            <option>1</option>
-            <option>2</option>
-            <option>3</option>
-            <option>4</option>
-            <option>5</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="exampleSelectInfo">Info</label>
-          <select class="form-control border-info" id="exampleSelectInfo">
-            <option>1</option>
-            <option>2</option>
-            <option>3</option>
-            <option>4</option>
-            <option>5</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="exampleSelectSuccess">Success</label>
-          <select class="form-control border-success" id="exampleSelectSuccess">
-            <option>1</option>
-            <option>2</option>
-            <option>3</option>
-            <option>4</option>
-            <option>5</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="exampleSelectDanger">Danger</label>
-          <select class="form-control border-danger" id="exampleSelectDanger">
-            <option>1</option>
-            <option>2</option>
-            <option>3</option>
-            <option>4</option>
-            <option>5</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="exampleSelectWarning">Warning</label>
-          <select class="form-control border-warning" id="exampleSelectWarning">
-            <option>1</option>
-            <option>2</option>
-            <option>3</option>
-            <option>4</option>
-            <option>5</option>
-          </select>
-        </div>
+          <div class="row pt-3">
+              <p class="card-description col-7">
+                  Required Items
+              </p>
+              <div class="col-5 align-self-center">
+                  <button type="submit" class="btn btn-success btn-sm pull-right">Add Item<i class="mdi mdi-plus"></i></button>
+              </div>
+              
+          </div>
+
+            <div class="table-responsive pt-2">
+                <table class="table table-bordered">
+                    <thead>
+                      <tr>
+                        <th>Item Name</th>
+                        <th>Unit Of Measure</th>
+                        <th>Purchase Unit</th>
+                        <th>Formula</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Sheet, Epoxy, 4" x 4" W2.0 x W2.0</td>
+                        <td>sq ft</td>
+                        <td>7' x 20' Sheets</td>
+                        <td>119 sq ft = 1 7' x 20' Sheets</td>
+                        <td><button class="btn btn-danger"><i class="fa fa-trash"></i></button></td>
+                      </tr>
+                      <tr>
+                          <td style="white-space: normal">Sheet, Epoxy, 4" xasdasdasdasdasdasasdas 4" W2.0 x W2.0</td>
+                          <td>sq ft</td>
+                          <td>7' x 20' Sheets</td>
+                          <td>119 sq ft = 1 7' x 20' Sheets</td>
+                          <td><button class="btn btn-danger"><i class="fa fa-trash"></i></button></td>
+                        </tr>
+                    </tbody>
+                  </table>
+            </div>
+          
       </div>
     </div>
   </div>
