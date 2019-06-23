@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { AssembliesComponent } from './assemblies/assemblies.component';
+import { AssembliesComponent } from './Components/assemblies/assemblies.component';
 
 const routes: Routes = [
   { path: 'assemblies', component: AssembliesComponent }
