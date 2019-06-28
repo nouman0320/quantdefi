@@ -21,6 +21,69 @@ export class WebService {
   constructor(private http: HttpClient) { }
 
 
+  createItem(jsotStr: any): Observable<any>{
+    let headers = new HttpHeaders();
+    headers = headers.append('Content-Type', 'application/json');
+    return this.http.post(this.baseURL + 'newitem', jsotStr,{
+      headers: headers
+    });
+  }
+
+  createAssembly(jsotStr: any): Observable<any>{
+    let headers = new HttpHeaders();
+    headers = headers.append('Content-Type', 'application/json');
+    return this.http.post(this.baseURL + 'newassembly', jsotStr,{
+      headers: headers
+    });
+  }
+
+  createFolder(folderType: String, folderLocality: String, folderParent: String, folderName: String, userId: String): Observable<any>{
+
+    const body = {
+      "type": folderType,
+      "locality": folderLocality,
+      "parent": folderParent,
+      "name": folderName,
+      "created_by": userId
+    }
+
+    let headers = new HttpHeaders();
+    headers = headers.append('Content-Type', 'application/json');
+    return this.http.post(this.baseURL + 'newfolder', body,{
+      headers: headers
+    });
+  }
+
+
+  deleteFileSystem(id: String, type: String): Observable<any>{
+    const body = {
+     "_id":id,
+     "type":type
+    }
+
+    let headers = new HttpHeaders();
+    headers = headers.append('Content-Type', 'application/json');
+    return this.http.post(this.baseURL + 'delete-filesystem', body,{
+      headers: headers
+    });
+  }
+
+  getFileSystem(type: String, locality: String, user_id: String): Observable<any>{
+    const body = {
+     "type": type,
+      "locality": locality,
+      "created_by": user_id
+    }
+
+    let headers = new HttpHeaders();
+    headers = headers.append('Content-Type', 'application/json');
+    return this.http.post(this.baseURL + 'filesystem', body,{
+      headers: headers
+    });
+  }
+
+
+
   getFolder(folder_id: String, type: String, parent: String): Observable<any>{
 
     const body = {

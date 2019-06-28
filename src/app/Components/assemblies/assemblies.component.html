@@ -6,19 +6,19 @@
             <div class="card-body">
                 <h4>Custom Assemblies</h4>
 
-                <form class="forms-sample ml-3">
+                <form [hidden]="!this.newFolderDialog" class="forms-sample ml-3">
 
                     <div class="row">
               
                         <div class="col-md-10 form-group">
                           <label for="inputAssemblyName">Create a folder:</label>
                           <div class="row">
-                              <input type="text" class="form-control col-8" id="inputAssemblyName" placeholder="">
+                              <input #folder_name type="text" class="form-control col-8" id="inputAssemblyName" placeholder="">
                               <div class="col-1 mr-2">
-                                  <button type="submit" class="btn btn-success btn-sm"><i class="fa fa-check"></i></button>
+                                  <button (click)="addNewFolder(folder_name.value)" class="btn btn-success btn-sm"><i class="fa fa-check"></i></button>
                               </div>
                               <div class="col-1 ml-3">
-                                  <button type="submit" class="btn btn-default btn-sm"><i class="fa fa-times"></i></button>
+                                  <button (click)="cancelNewFolder()" class="btn btn-default btn-sm"><i class="fa fa-times"></i></button>
                               </div>
                           </div>
                           
@@ -45,29 +45,44 @@
           <div class="card-body">
             <h4>Default Assemblies</h4>
             <ul style="list-style:none;">
-              <li><i class="fa fa-folder mr-2"></i><span (click)="getDefaultAssembliesRootContents()" style="cursor:pointer">Assemblies</span>
-                <p [hidden]="true">Loading...</p>
-                <mat-tree [hidden]="false" [dataSource]="nestedDefaultAssembliesDataSource" [treeControl]="nestedDefaultAssembliesTreeControl" class="example-tree">
+              <li><i class="fa fa-folder mr-2"></i><span>Assemblies<i style="cursor:pointer" (click)="this.createNewFolder('default', 'assembly', null)" class="fa fa-plus ml-2"></i></span>
+                <p [hidden]="!this.defaultRefresh">Loading...</p>
+                <mat-tree [hidden]="this.defaultRefresh" [dataSource]="nestedDefaultAssembliesDataSource" [treeControl]="nestedDefaultAssembliesTreeControl" class="example-tree">
                   <mat-tree-node *matTreeNodeDef="let node">
-                      <li class="mat-tree-node">
-                          <button mat-icon-button disabled></button>
-                          <i class="fa fa-file mr-2"></i>{{node.name}}<i class="fa fa-pencil ml-2"></i>
-                      </li>
+                        <li class="mat-tree-node">
+                            <button mat-icon-button disabled></button>
+                            <i class="fa fa-cube mr-2"></i>{{node.name}}<i style="cursor: pointer;" class="fa fa-trash ml-2"(click)="delete_item(node._id)"></i>
+                        </li>
+
+                        
                   </mat-tree-node>
               
                   <mat-nested-tree-node *matTreeNodeDef="let node; when: hasNestedChild">
                       <li>
+                          <div ngbDropdown>
                           <div class="mat-tree-node">
                               <button mat-icon-button matTreeNodeToggle>
                                   <mat-icon class="mat-icon-rtl-mirror">
                                     {{nestedDefaultAssembliesTreeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
                                   </mat-icon>
                               </button>
-                              <i class="fa fa-folder mr-2"></i>{{node.name}}<i class="fa fa-pencil ml-2"></i>
+                              <i class="fa fa-folder mr-2"></i>{{node.name}}
+                              <i style="cursor: pointer;" class="fa fa-pencil ml-2" id="dropdownMenuButton1" ngbDropdownToggle></i>
+                                
+                              
                           </div>
                           <ul [class.example-tree-invisible]="!nestedDefaultAssembliesTreeControl.isExpanded(node)">
                               <ng-container matTreeNodeOutlet></ng-container>
                           </ul>
+
+                          <div style="z-index: 999;" ngbDropdownMenu aria-labelledby="dropdownMenuButton1">
+                              <span (click)="this.createNewFolder('default', 'assembly', node._id)" class="dropdown-item" style="cursor: pointer;"><i class="fa fa-folder mr-2"></i>New Folder</span>
+                              <span (click)="createNewAssembly('assembly', node._id, null)" class="dropdown-item" style="cursor: pointer;"><i class="fa fa-cube mr-2"></i>New Assembly</span>
+                              <div class="dropdown-divider"></div>
+                              <span (click)="delete_folder(node._id)" class="dropdown-item" style="cursor: pointer;"><i class="fa fa-trash mr-2" ></i>Delete</span>
+                            </div>
+
+                        </div>
                       </li>
                   </mat-nested-tree-node>
               </mat-tree>
@@ -82,6 +97,19 @@
   <div class="col-md-7 grid-margin stretch-card">
     <div class="card">
       <div class="card-body">
+        <section [hidden]="this.assemblyStage>0" class="h-100">
+            <header class="container h-100">
+              <div class="d-flex align-items-center justify-content-center h-100">
+                <div class="d-flex flex-column">
+                  <h1 class="display-1 align-self-center p-2"><i class="fa fa-cubes"></i></h1>
+                  <h4 class="display-6 align-self-center p-2">Please select an assembly from the left.</h4>
+
+                </div>
+              </div>
+            </header>
+          </section>
+        <section [hidden]="this.assemblyStage<1">
+
         <h4 class="card-title">Assembly Detail</h4>
         <p class="card-description">
           Basic Information
@@ -92,15 +120,15 @@
     
               <div class="col-md-4 form-group">
                 <label for="inputAssemblyName">Assembly Name:</label>
-                <input type="text" class="form-control" id="inputAssemblyName" placeholder="">
+                <input #assemblyName type="text" class="form-control" id="inputAssemblyName" placeholder="">
               </div>
               <div class="col-md-4 form-group">
                 <label for="inputAssemblyId">Assembly ID:</label>
-                <input type="email" class="form-control" id="inputAssemblyId" placeholder="">
+                <input #assemblyId type="email" class="form-control" id="inputAssemblyId" placeholder="">
               </div>
               <div class="col-md-4 form-group">
                       <label class="col-form-label">Unit of measure:</label>
-                      <select class="form-control">
+                      <select #assemblyUnit class="form-control">
                           <option hidden disabled selected value></option>
                           <option>sq ft</option>
                           <option>lin ft</option>
@@ -116,27 +144,27 @@
           
           <div class="form-group">
             <label for="textareaDescription">Description</label>
-            <textarea class="form-control" id="textareaDescription" style="resize: vertical"></textarea>
+            <textarea #assemblyDescription class="form-control" id="textareaDescription" style="resize: vertical"></textarea>
           </div>
 
           <div class="row m-3 flex-grow">
 
-            <button type="submit" class="btn btn-success btn-sm m-1 col-sm-3 col-md-3 col-lg-2">Add<i class="mdi mdi-plus"></i></button>
-            <button class="btn btn-success btn-sm m-1 col-sm-3 col-md-3 col-lg-2">Save</button>
-            <button class="btn btn-primary btn-sm m-1 col-sm-3 col-md-3 col-lg-2">Save as</button>
-            <button class="btn btn-light m-1 btn-sm col-sm-3 col-md-3 col-lg-2">Cancel</button>
-            <button class="btn btn-danger btn-sm m-1 col-sm-3 col-md-3 col-lg-2">Delete</button>
+            <button [disabled]="this.assemblyInProgress" (click)="addAssembly(assemblyName.value, assemblyId.value, assemblyUnit.value, assemblyDescription.value)" [hidden]="this.assemblyStage>1" class="btn btn-success btn-sm m-1 col-sm-3 col-md-3 col-lg-2">Add<i class="mdi mdi-plus"></i></button>
+            <button [hidden]="this.assemblyStage<2" class="btn btn-success btn-sm m-1 col-sm-3 col-md-3 col-lg-2">Save</button>
+            <button [hidden]="this.assemblyStage<2" class="btn btn-primary btn-sm m-1 col-sm-3 col-md-3 col-lg-2">Save as</button>
+            <button (click)="cancelAssembly()" class="btn btn-light m-1 btn-sm col-sm-3 col-md-3 col-lg-2">Cancel</button>
+            <button [hidden]="this.assemblyStage<2" class="btn btn-danger btn-sm m-1 col-sm-3 col-md-3 col-lg-2">Delete</button>
 
           </div>
         </form>
 
         
-        
+      </section> 
 
       </div>
     </div>
   </div>
-  <div class="col-md-12 grid-margin stretch-card">
+  <div [hidden]="this.assemblyStage<2" class="col-md-12 grid-margin stretch-card">
     <div class="card">
       <div class="card-body">
           <div class="row pt-3">
@@ -184,7 +212,7 @@
   </div>
 
   <!-- ADD GROUP -->
-  <div class="col-md-12 grid-margin stretch-card">
+  <div [hidden]="this.assemblyStage<2" class="col-md-12 grid-margin stretch-card">
     <div class="card">
       <div class="card-body">
           <div class="row pt-3">
@@ -275,3 +303,14 @@
     </div>
   </div>
 </div>
+
+
+<div [hidden]="!this.deleteConfirm" class="card card-inverse-warning bg-white mb-5 div_centered">
+    <div class="card-body">
+      <p class="mb-4">
+        You're about to delete something. It can't be undone.
+      </p>
+      <button [disabled]="this.deleteInProgress" (click)="this.confirm_delete()" class="btn btn-warning mr-2">Delete</button>
+      <button (click)="this.cancel_delete()" class="btn btn-light">Cancel</button>
+    </div>
+  </div>

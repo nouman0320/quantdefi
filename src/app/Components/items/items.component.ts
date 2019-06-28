@@ -11,31 +11,32 @@ import {BehaviorSubject, Observable, of as observableOf, from} from 'rxjs';
 
 import { WebService } from 'src/app/Services/web.service';
 import { Folder } from 'src/app/Model/folder';
-import { Assembly } from 'src/app/Model/assembly';
+import { Item } from 'src/app/Model/item';
 import { ToasterServiceService } from 'src/app/Services/toaster-service.service';
 
 
 @Component({
-  selector: 'app-assembliess',
-  templateUrl: './assemblies.component.html',
-  styleUrls: ['./assemblies.component.scss']
+  selector: 'app-items',
+  templateUrl: './items.component.html',
+  styleUrls: ['./items.component.scss']
 })
-export class AssembliesComponent implements OnInit {
+export class ItemsComponent implements OnInit {
 
+  
   // for development
   admim: String = "5d134fa15ea09b2af8c37f01";
   //--
 
   @ViewChild("folder_name", null) folderInput: ElementRef;
-  @ViewChild("assemblyName", null) assemblyNameInput: ElementRef;
-  @ViewChild("assemblyId", null) assemblyIdInput: ElementRef;
-  @ViewChild("assemblyUnit", null) assemblyUnitInput: ElementRef;
-  @ViewChild("assemblyDescription", null) assemblyDescriptionInput: ElementRef;
+  @ViewChild("itemName", null) itemNameInput: ElementRef;
+  @ViewChild("itemId", null) itemIdInput: ElementRef;
+  @ViewChild("itemUnit", null) itemUnitInput: ElementRef;
+  @ViewChild("itemDescription", null) itemDescriptionInput: ElementRef;
   
 
-  assembly: Assembly = null;
-  assemblyStage: number = 0;
-  assemblyInProgress: Boolean = false;
+  item: Item = null;
+  itemStage: number = 0;
+  itemInProgress: Boolean = false;
 
   deleteConfirm: Boolean = false;
   deleteID: String = null;
@@ -49,59 +50,59 @@ export class AssembliesComponent implements OnInit {
 
   defaultRefresh: Boolean = false;
 
-  nestedDefaultAssembliesTreeControl: NestedTreeControl<Folder>;
-  nestedDefaultAssembliesDataSource: MatTreeNestedDataSource<Folder>;
+  nestedDefaultItemsTreeControl: NestedTreeControl<Folder>;
+  nestedDefaultItemsDataSource: MatTreeNestedDataSource<Folder>;
   dataChange: BehaviorSubject<Folder[]> = new BehaviorSubject<Folder[]>([]);
 
 
-  createNewAssembly(locality: String, parentId: String, created_by: String){
+  createNewItem(locality: String, parentId: String, created_by: String){
 
-    this.assemblyNameInput.nativeElement.value = '';
-    this.assemblyIdInput.nativeElement.value = '';
-    this.assemblyUnitInput.nativeElement.value = '';
-    this.assemblyDescriptionInput.nativeElement.value = '';
+    this.itemNameInput.nativeElement.value = '';
+    this.itemIdInput.nativeElement.value = '';
+    this.itemUnitInput.nativeElement.value = '';
+    this.itemDescriptionInput.nativeElement.value = '';
 
-    this.assembly = new Assembly();
-    this.assembly.parent = parentId;
-    this.assembly.created_by = created_by;
-    this.assembly.locality = locality;
-    this.assemblyStage = 1;
+    this.item = new Item();
+    this.item.parent = parentId;
+    this.item.created_by = created_by;
+    this.item.locality = locality;
+    this.itemStage = 1;
   }
 
 
-  cancelAssembly(){
-    this.assemblyStage = 0;
+  cancelItem(){
+    this.itemStage = 0;
   }
 
-  addAssembly(assemblyName: String, assemblyId: String, assemblyUnit: String, assemblyDescription: String){
+  addItem(itemName: String, itemId: String, itemUnit: String, itemDescription: String){
     //this.toasterService.Success("Add button clicked");
-    console.log(assemblyName);
-    console.log(assemblyId);
-    console.log(assemblyUnit);
-    console.log(assemblyDescription);
+    console.log(itemName);
+    console.log(itemId);
+    console.log(itemUnit);
+    console.log(itemDescription);
 
 
     var checkCount = 0;
     var errorStr = "";
-    if(assemblyName=="")
+    if(itemName=="")
     {
       errorStr+=" • Name";
       checkCount++;
     }
 
-    if(assemblyId=="")
+    if(itemId=="")
     {
       errorStr+=" • Id";
       checkCount++;
     }
 
-    if(assemblyUnit=="")
+    if(itemUnit=="")
     {
       errorStr+=" • Unit";
       checkCount++;
     }
 
-    if(assemblyDescription=="")
+    if(itemDescription=="")
     {
       errorStr+=" • Description";
       checkCount++;
@@ -114,35 +115,35 @@ export class AssembliesComponent implements OnInit {
       return;
     }
 
-    this.assembly.name = assemblyName;
-    this.assembly.id_f = assemblyId;
-    this.assembly.unit_of_measure = assemblyUnit;
-    this.assembly.description = assemblyDescription;
+    this.item.name = itemName;
+    this.item.id_f = itemId;
+    this.item.unit_of_measure = itemUnit;
+    this.item.description = itemDescription;
 
 
     const jsonObj = {
-      "locality": this.assembly.locality,
-      "id_f": this.assembly.id_f,
-      "name": this.assembly.name,
-      "parent": this.assembly.parent,
-      "created_by": this.assembly.created_by,
-      "units": this.assembly.unit_of_measure,
-      "description": this.assembly.description
+      "locality": this.item.locality,
+      "id_f": this.item.id_f,
+      "name": this.item.name,
+      "parent": this.item.parent,
+      "created_by": this.item.created_by,
+      "units": this.item.unit_of_measure,
+      "description": this.item.description
     }
 
-    this.assemblyInProgress = true;
-    this.webService.createAssembly(jsonObj).subscribe(
+    this.itemInProgress = true;
+    this.webService.createItem(jsonObj).subscribe(
       data=>{
-        this.toasterService.Success("Assembly added");
+        this.toasterService.Success("Item added");
         this.refreshFolders("default");
-        this.assemblyStage = this.assemblyStage + 1;
+        this.itemStage = this.itemStage + 1;
       },
       err=>{
-        this.toasterService.Error("Unable to add assembly");
-        this.assemblyInProgress = false;
+        this.toasterService.Error("Unable to add item");
+        this.itemInProgress = false;
       },
       ()=>{
-        this.assemblyInProgress = false;
+        this.itemInProgress = false;
       }
     );
 
@@ -194,7 +195,7 @@ export class AssembliesComponent implements OnInit {
   refreshFolders(type: String){
     if(type == 'default'){
       this.defaultRefresh = true;
-      this.webService.getFileSystem('default', 'assembly', null).subscribe(
+      this.webService.getFileSystem('default', 'item', null).subscribe(
         data =>{
           console.log(data);
           this.dataChange.next(data);
@@ -218,13 +219,13 @@ export class AssembliesComponent implements OnInit {
 
 
   constructor(public webService: WebService, public toasterService: ToasterServiceService) { 
-    this.nestedDefaultAssembliesTreeControl = new NestedTreeControl<Folder>(this._getChildren);
-    this.nestedDefaultAssembliesDataSource = new MatTreeNestedDataSource();
+    this.nestedDefaultItemsTreeControl = new NestedTreeControl<Folder>(this._getChildren);
+    this.nestedDefaultItemsDataSource = new MatTreeNestedDataSource();
 
 
     
 
-    this.dataChange.subscribe(data => this.nestedDefaultAssembliesDataSource.data = data);
+    this.dataChange.subscribe(data => this.nestedDefaultItemsDataSource.data = data);
     this.refreshFolders('default');
     
 
@@ -332,10 +333,6 @@ export class AssembliesComponent implements OnInit {
   }
 
   
-
-
-
-
 
 
 }

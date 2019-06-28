@@ -21,6 +21,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { MatTreeModule} from '@angular/material/tree';
 import {MatButtonModule} from '@angular/material/button';
 import {MatIconModule} from '@angular/material/icon';
+import { ItemsComponent } from './Components/items/items.component';
 
 
 
@@ -30,7 +31,8 @@ import {MatIconModule} from '@angular/material/icon';
     NavbarComponent,
     SidebarComponent,
     FooterComponent,
-    AssembliesComponent
+    AssembliesComponent,
+    ItemsComponent
   ],
   imports: [
     BrowserModule,

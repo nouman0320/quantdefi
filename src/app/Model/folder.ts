@@ -3,15 +3,16 @@ import { WebService } from '../Services/web.service';
 
 export class Folder {
 
-    //id: String;
+    _id: String;
     type: String;
+    locality: String;
     name: String;
-
-    childern_folders: Folder[];
-    //childern_files: Array<File> = [];
-
-    //creation_date: String;
-    //parent: String;
+    child_folder: Folder[];
+    child_file: Folder[];
+    parent: String;
+    created_by: String;
+    creation_date: String;
+    
 	
 
 
