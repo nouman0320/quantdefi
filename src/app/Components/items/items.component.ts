@@ -99,7 +99,8 @@ export class ItemsComponent implements OnInit {
     this.itemStage = 0;
   }
 
-  saveItem(){
+  
+  saveItem(saveAs: Boolean){
 
     var itemName = this.itemNameInput.nativeElement.value;
     var purchaseUnit = this.purchaseUnitValue;
@@ -182,6 +183,8 @@ export class ItemsComponent implements OnInit {
 
 
     const jsonObj = {
+      "_save_as": saveAs,
+      "_user_id": this.userId,
       "_id": this.openedItem._id,
       "locality": this.openedItem.locality,
       "name": this.openedItem.name,
@@ -201,6 +204,7 @@ export class ItemsComponent implements OnInit {
       data=>{
         this.toasterService.Success("Item saved");
         this.openItem(data._id);
+        this.refreshFolders('custom');
       },
       err=>{
         this.toasterService.Error("Unable to save");

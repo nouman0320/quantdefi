@@ -235,8 +235,8 @@
             <div class="row m-3 flex-grow">
   
               <button [disabled]="this.itemInProgress || this.itemStage>1" (click)="addItem()" [hidden]="this.itemStage>1" class="btn btn-success btn-sm m-1 col-sm-3 col-md-3 col-lg-2">Add<i class="mdi mdi-plus"></i></button>
-              <button (click)="saveItem()" [hidden]="this.itemStage<2" [disabled]="(this.isOpenedItemDefault && !this.isAdmin) || this.saveInProgress" class="btn btn-success btn-sm m-1 col-sm-3 col-md-3 col-lg-2">Save</button>
-              <button [hidden]="this.itemStage<2" class="btn btn-primary btn-sm m-1 col-sm-3 col-md-3 col-lg-2">Save as</button>
+              <button (click)="saveItem(false)" [hidden]="this.itemStage<2" [disabled]="(this.isOpenedItemDefault && !this.isAdmin) || this.saveInProgress" class="btn btn-success btn-sm m-1 col-sm-3 col-md-3 col-lg-2">Save</button>
+              <button (click)="saveItem(true)" [hidden]="this.itemStage<2" class="btn btn-primary btn-sm m-1 col-sm-3 col-md-3 col-lg-2">Save as</button>
               <button (click)="cancelItem()" class="btn btn-light m-1 btn-sm col-sm-3 col-md-3 col-lg-2">Cancel</button>
               <button (click)="delete_item(this.openedItem._id)" [hidden]="this.itemStage<2"[disabled]="(this.isOpenedItemDefault && !this.isAdmin)" class="btn btn-danger btn-sm m-1 col-sm-3 col-md-3 col-lg-2">Delete</button>
   
