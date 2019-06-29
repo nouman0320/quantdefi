@@ -20,11 +20,30 @@ export class WebService {
 
   constructor(private http: HttpClient) { }
 
+  openItem(id: String): Observable<any>{
+    console.log(id);
+    const body = {
+      "_id":id
+    }
+    let headers = new HttpHeaders();
+    headers = headers.append('Content-Type', 'application/json');
+    return this.http.post(this.baseURL + 'openitem', body,{
+      headers: headers
+    });
+  }
 
   createItem(jsotStr: any): Observable<any>{
     let headers = new HttpHeaders();
     headers = headers.append('Content-Type', 'application/json');
     return this.http.post(this.baseURL + 'newitem', jsotStr,{
+      headers: headers
+    });
+  }
+
+  saveItem(jsotStr: any): Observable<any>{
+    let headers = new HttpHeaders();
+    headers = headers.append('Content-Type', 'application/json');
+    return this.http.post(this.baseURL + 'saveitem', jsotStr,{
       headers: headers
     });
   }

@@ -1,6 +1,6 @@
 export class Assembly{
     name: String;
-    id: String;
+    _id: String;
     id_f: String;
     unit_of_measure: String;
     description: String;
