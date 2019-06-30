@@ -76,6 +76,32 @@ export class WebService {
   }
 
 
+  deleteItemGroup(groupId: String, assembly_id: String, group_index: any):Observable<any>{
+    const body = {
+      "_group_id":groupId,
+      "_assembly_id": assembly_id,
+      "group_index":group_index
+    }
+    let headers = new HttpHeaders();
+    headers = headers.append('Content-Type', 'application/json');
+    return this.http.post(this.baseURL + 'deleteitemgroup', body,{
+      headers: headers
+    });
+  }
+
+  deleteItemInsideGroup(groupId: String, item_id: String, item_index: any):Observable<any>{
+    const body = {
+      "_group_id":groupId,
+      "_item_id":item_id,
+      "item_index":item_index
+    }
+    let headers = new HttpHeaders();
+    headers = headers.append('Content-Type', 'application/json');
+    return this.http.post(this.baseURL + 'deleteiteminsidegroup', body,{
+      headers: headers
+    });
+  }
+
   getGroup(id: String):Observable<any>{
     console.log(id);
     const body = {
@@ -124,6 +150,14 @@ export class WebService {
     let headers = new HttpHeaders();
     headers = headers.append('Content-Type', 'application/json');
     return this.http.post(this.baseURL + 'saveitem', jsotStr,{
+      headers: headers
+    });
+  }
+
+  saveAssembly(jsotStr: any): Observable<any>{
+    let headers = new HttpHeaders();
+    headers = headers.append('Content-Type', 'application/json');
+    return this.http.post(this.baseURL + 'saveassembly', jsotStr,{
       headers: headers
     });
   }

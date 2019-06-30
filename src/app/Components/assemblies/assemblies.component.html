@@ -61,7 +61,7 @@
       
                                 <div style="z-index: 999;" ngbDropdownMenu aria-labelledby="dropdownMenuButton1">
                                     <span (click)="this.createNewFolder('custom', 'assembly', node._id)" class="dropdown-item" style="cursor: pointer;"><i class="fa fa-folder mr-2"></i>New Folder</span>
-                                    <span (click)="createNewAssembly('assembly', node._id, null)" class="dropdown-item" style="cursor: pointer;"><i class="fa fa-cube mr-2"></i>New Assembly</span>
+                                    <span (click)="createNewAssembly('assembly', node._id, this.userId)" class="dropdown-item" style="cursor: pointer;"><i class="fa fa-cube mr-2"></i>New Assembly</span>
                                     <div class="dropdown-divider"></div>
                                     <span (click)="delete_folder(node._id)" class="dropdown-item" style="cursor: pointer;"><i class="fa fa-trash mr-2" ></i>Delete</span>
                                   </div>
@@ -181,10 +181,10 @@
           <div class="row m-3 flex-grow">
 
             <button [disabled]="this.assemblyInProgress" (click)="addAssembly(assemblyName.value, assemblyId.value, assemblyUnit.value, assemblyDescription.value)" [hidden]="this.assemblyStage>1" class="btn btn-success btn-sm m-1 col-sm-3 col-md-3 col-lg-2">Add<i class="mdi mdi-plus"></i></button>
-            <button [hidden]="this.assemblyStage<2" class="btn btn-success btn-sm m-1 col-sm-3 col-md-3 col-lg-2">Save</button>
-            <button [hidden]="this.assemblyStage<2" class="btn btn-primary btn-sm m-1 col-sm-3 col-md-3 col-lg-2">Save as</button>
-            <button (click)="cancelAssembly()" class="btn btn-light m-1 btn-sm col-sm-3 col-md-3 col-lg-2">Cancel</button>
-            <button [hidden]="this.assemblyStage<2" class="btn btn-danger btn-sm m-1 col-sm-3 col-md-3 col-lg-2">Delete</button>
+            <button (click)="saveAssembly(false)" [hidden]="this.assemblyStage<2" [disabled]="(this.isOpenedAssemblyDefault && !this.isAdmin) || this.saveInProgress" class="btn btn-success btn-sm m-1 col-sm-3 col-md-3 col-lg-2">Save</button>
+              <button (click)="saveAssembly(true)" [hidden]="this.assemblyStage<2" class="btn btn-primary btn-sm m-1 col-sm-3 col-md-3 col-lg-2">Save as</button>
+              <button (click)="cancelAssembly()" class="btn btn-light m-1 btn-sm col-sm-3 col-md-3 col-lg-2">Cancel</button>
+              <button (click)="delete_item(this.openedAssembly._id)" [hidden]="this.assemblyStage<2"[disabled]="(this.isOpenedAssemblyDefault && !this.isAdmin)" class="btn btn-danger btn-sm m-1 col-sm-3 col-md-3 col-lg-2">Delete</button>
 
           </div>
         </form>
@@ -203,7 +203,7 @@
                   Required Items
               </p>
               <div class="col-5 align-self-center">
-                  <button (click)="openXl(content, 'individual')" type="submit" class="btn btn-success btn-sm pull-right">Add Item<i class="mdi mdi-plus"></i></button>
+                  <button (click)="openXl(content, 'individual')" [disabled]="(this.isOpenedAssemblyDefault && !this.isAdmin)" type="submit" class="btn btn-success btn-sm pull-right">Add Item<i class="mdi mdi-plus"></i></button>
               </div>
               
           </div>
@@ -226,7 +226,7 @@
                           <td>{{item.item_unit}}</td>
                           <td>{{item.purchase_unit}}</td>
                           <td>{{item.coverage_rate_1}} {{item.item_unit}} = {{item.coverage_rate_2}} {{item.purchase_unit}}</td>
-                          <td><button class="btn btn-danger" (click)="deleteRequiredItem(item._id, i)" ><i class="fa fa-trash"></i></button></td>
+                          <td><button class="btn btn-danger" [disabled]="(this.isOpenedAssemblyDefault && !this.isAdmin)" (click)="deleteRequiredItem(item._id, i)" ><i class="fa fa-trash"></i></button></td>
                         </tr>
                     </tbody>
                   </table>
@@ -245,7 +245,7 @@
                   Item Groups
               </p>
               <div class="col-5 align-self-center">
-                  <button (click)="addNewItemGroup()" type="submit" class="btn btn-success btn-sm pull-right">Add Group<i class="mdi mdi-plus"></i></button>
+                  <button (click)="addNewItemGroup()" type="submit" [disabled]="(this.isOpenedAssemblyDefault && !this.isAdmin)" class="btn btn-success btn-sm pull-right">Add Group<i class="mdi mdi-plus"></i></button>
               </div>
               
           </div>
@@ -283,7 +283,7 @@
                         <th>Purchase Unit</th>
                         <th>Formula</th>
                         <th></th>
-                        <th><button (click)="deleteItemGroup(group._id, i)" class="btn btn-danger"><i class="fa fa-trash"></i></button></th>
+                        <th><button [disabled]="(this.isOpenedAssemblyDefault && !this.isAdmin)" (click)="deleteItemGroup(group._id, i)" class="btn btn-danger"><i class="fa fa-trash"></i></button></th>
                       </tr>
                     </thead>
                     <tbody>
@@ -292,10 +292,10 @@
                         <td>{{item.item_unit}}</td>
                         <td>{{item.purchase_unit}}</td>
                         <td>{{item.coverage_rate_1}} {{item.item_unit}} = {{item.coverage_rate_2}} {{item.purchase_unit}}</td>
-                        <td><button [hidden]="(j==(group.group_items.length-1))" (click)="moveItemDown(group._id, item._id, j)" class="btn btn-default btn-xs"><i class="fa fa-arrow-down"></i></button><button [hidden]="(j==0)" (click)="moveItemUp(group._id, item._id, j)" class="btn btn-default btn-xs ml-2"><i class="fa fa-arrow-up"></i></button></td>
-                        <td><button (click)="deleteItemInsideGroup(group._id,item._id,j)" class="btn btn-danger"><i class="fa fa-trash"></i></button></td>
+                        <td><button [disabled]="(this.isOpenedAssemblyDefault && !this.isAdmin)" [hidden]="(j==(group.group_items.length-1))" (click)="moveItemDown(group._id, item._id, j)" class="btn btn-default btn-xs"><i class="fa fa-arrow-down"></i></button><button [disabled]="(this.isOpenedAssemblyDefault && !this.isAdmin)" [hidden]="(j==0)" (click)="moveItemUp(group._id, item._id, j)" class="btn btn-default btn-xs ml-2"><i class="fa fa-arrow-up"></i></button></td>
+                        <td><button [disabled]="(this.isOpenedAssemblyDefault && !this.isAdmin)" (click)="deleteItemInsideGroup(group._id,item._id,j)" class="btn btn-danger"><i class="fa fa-trash"></i></button></td>
                       </tr>
-                      <td><button (click)="addItemToGroup(content, group._id)" class="btn btn-success btn-sm"><i class="mdi mdi-plus"></i> Add</button></td>
+                      <td><button [disabled]="(this.isOpenedAssemblyDefault && !this.isAdmin)" (click)="addItemToGroup(content, group._id)" class="btn btn-success btn-sm"><i class="mdi mdi-plus"></i> Add</button></td>
                     </tbody>
                   </table>
             </div>

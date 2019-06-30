@@ -118,6 +118,90 @@ export class AssembliesComponent implements OnInit {
   cancelAssembly(){
     this.assemblyStage = 0;
     this.requiredItems = [];
+    this.itemGroup = [];
+  }
+
+
+  saveAssembly(saveAs: Boolean){
+
+    var assemblyName = this.assemblyNameInput.nativeElement.value;
+    var assemblyId = this.assemblyIdInput.nativeElement.value;
+    var assemblyUnit = this.assemblyUnitInput.nativeElement.value;
+    var assemblyDescription = this.assemblyDescriptionInput.nativeElement.value;
+
+    var checkCount = 0;
+    var errorStr = "";
+    if(assemblyName=="")
+    {
+      errorStr+=" • Name";
+      checkCount++;
+    }
+
+    if(assemblyId=="")
+    {
+      errorStr+=" • Id";
+      checkCount++;
+    }
+
+    if(assemblyUnit=="")
+    {
+      errorStr+=" • Unit";
+      checkCount++;
+    }
+
+    if(assemblyDescription=="")
+    {
+      errorStr+=" • Description";
+      checkCount++;
+    }
+
+
+    if(checkCount>0){
+      errorStr+=" must be valid."
+      this.toasterService.Error(errorStr);
+      return;
+    }
+
+
+    this.openedAssembly.name = assemblyName;
+    this.openedAssembly.id_f = assemblyId;
+    this.openedAssembly.unit_of_measure = assemblyUnit;
+    this.openedAssembly.description = assemblyDescription;
+
+
+    const jsonObj = {
+      "_save_as": saveAs,
+      "_user_id": this.userId,
+      "_id": this.openedAssembly._id,
+      "locality": this.openedAssembly.locality,
+      "id_f": this.openedAssembly.id_f,
+      "name": this.openedAssembly.name,
+      "parent": this.openedAssembly.parent,
+      "created_by": this.openedAssembly.created_by,
+      "units": this.openedAssembly.unit_of_measure,
+      "description": this.openedAssembly.description
+    }
+
+    this.assemblyInProgress = true;
+    this.webService.saveAssembly(jsonObj).subscribe(
+      data=>{
+
+
+        this.toasterService.Success("Saved");
+        this.refreshFolders("default");
+        this.refreshFolders("custom");
+        this.assemblyStage = this.assemblyStage + 1;
+        this.openAssembly(data._id);
+      },
+      err=>{
+        this.toasterService.Error("Unable to save assembly");
+        this.assemblyInProgress = false;
+      },
+      ()=>{
+        this.assemblyInProgress = false;
+      }
+    );
+
   }
 
   addAssembly(assemblyName: String, assemblyId: String, assemblyUnit: String, assemblyDescription: String){
@@ -180,10 +264,13 @@ export class AssembliesComponent implements OnInit {
     this.assemblyInProgress = true;
     this.webService.createAssembly(jsonObj).subscribe(
       data=>{
+
+
         this.toasterService.Success("Assembly added");
         this.refreshFolders("default");
         this.refreshFolders("custom");
         this.assemblyStage = this.assemblyStage + 1;
+        this.openAssembly(data._id);
       },
       err=>{
         this.toasterService.Error("Unable to add assembly");
@@ -223,13 +310,15 @@ export class AssembliesComponent implements OnInit {
         this.openedAssembly.id_f = data.id_f;
         this.openedAssembly.name = data.name;
         this.openedAssembly.parent = data.parent;
-        this.openedAssembly.created_by = data.parent;
+        this.openedAssembly.created_by = data.created_by;
         this.openedAssembly.unit_of_measure = data.unit;
         this.openedAssembly.description = data.description;
 
         var item_ids = data.required_item;
 
         var group_ids = data.group_item;
+        console.log('group ids '+ group_ids);
+        console.log('item ids' + item_ids);
 
         if(group_ids!=null){
           for(let i=0;i<group_ids.length;i++){
@@ -321,6 +410,9 @@ export class AssembliesComponent implements OnInit {
         if(this.openedAssembly.created_by == null){
           this.isOpenedAssemblyDefault = true;
         }
+
+        console.log('createdby = '+this.openedAssembly.created_by);
+        console.log('openedAssemblyDefault = '+this.isOpenedAssemblyDefault);
 
         this.assemblyNameInput.nativeElement.value = this.openedAssembly.name;
         this.assemblyIdInput.nativeElement.value = this.openedAssembly.id_f;
@@ -526,6 +618,9 @@ export class AssembliesComponent implements OnInit {
         this.refreshFolders("default");
         this.refreshFolders("custom");
         this.toasterService.Info("Deleted.")
+        this.assemblyStage = 0;
+        this.itemGroup = [];
+        this.requiredItems = [];
       },
       err =>{
         this.toasterService.Error("Unable to perform the action.");
@@ -684,19 +779,51 @@ export class AssembliesComponent implements OnInit {
 
 
   moveItemUp(group_id: String, item_id: String, item_index: any){
-
+    for(let i=0;i<this.itemGroup.length;i++){
+      if(this.itemGroup[i]._id==group_id){
+        var item1 = this.itemGroup[i].group_items[item_index];
+        this.itemGroup[i].group_items[item_index] = this.itemGroup[i].group_items[item_index-1];
+        this.itemGroup[i].group_items[item_index-1] = item1;
+      }
+    }
   }
 
   moveItemDown(group_id: String, item_id: String, item_index: any){
-
+    for(let i=0;i<this.itemGroup.length;i++){
+      if(this.itemGroup[i]._id==group_id){
+        var item1 = this.itemGroup[i].group_items[item_index];
+        this.itemGroup[i].group_items[item_index] = this.itemGroup[i].group_items[item_index+1];
+        this.itemGroup[i].group_items[item_index+1] = item1;
+      }
+    }
   }
 
   deleteItemInsideGroup(groupId: String, item_id: String, item_index: any){
-
+    console.log(groupId+' '+item_id+' '+item_index);
+    this.webService.deleteItemInsideGroup(groupId, item_id, item_index).subscribe(data=>{
+      for(let i=0;i<this.itemGroup.length;i++){
+        if(this.itemGroup[i]._id == groupId){
+          this.itemGroup[i].group_items.splice(item_index, 1);
+        }
+      }
+      this.toasterService.Info("Deleted");
+    }
+    ,err=>{
+      this.toasterService.Error("Unable to delete");
+    });
   }
   
   deleteItemGroup(groupId: String, index: any){
+    this.webService.deleteItemGroup(groupId, this.openedAssembly._id, index).subscribe(
+      data=>{
+        this.itemGroup.splice(index, 1);
+        this.toasterService.Info("Deleted");
+      }, err =>{
+        this.toasterService.Error("Unable to delete");
+      }, ()=>{
 
+      }
+    )
   }
 
   addItemToGroup(content, groupId: String){
