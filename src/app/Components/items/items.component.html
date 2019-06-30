@@ -29,13 +29,14 @@
                     </form>
 
                     <ul style="list-style:none;">
-                        <li><i class="fa fa-folder mr-2"></i><span>Items<i style="cursor:pointer" (click)="this.createNewFolder('custom', 'item', null)" class="fa fa-plus ml-2"></i></span>
-                          <div [hidden]="!this.defaultRefresh" class="fa-3x"><i class="fa fa-cog fa-spin"></i></div>
+                        <li><i class="fa fa-folder mr-2"></i><span style="cursor: default">Items<i [hidden]="this.customRefresh" style="cursor:pointer" (click)="this.createNewFolder('custom', 'item', null)" class="fa fa-plus ml-2"></i></span>
+                          <div [hidden]="!this.customRefresh" class="fa-3x"><i class="fa fa-cog fa-spin"></i></div>
                           <mat-tree [hidden]="this.customRefresh" [dataSource]="nestedCustomItemsDataSource" [treeControl]="nestedCustomItemsTreeControl" class="example-tree">
                             <mat-tree-node *matTreeNodeDef="let node">
                                   <li class="mat-tree-node">
                                       <button mat-icon-button disabled></button>
-                                      <span style="cursor: pointer;" (click)="openItem(node._id)"><i class="fa fa-cube mr-2"></i>{{node.name}}</span>
+                                      <span style="cursor: pointer;" 
+                                      (click)="openItem(node._id)"><i class="fa fa-cube mr-2"></i>{{node.name}}</span>
                                   </li>
           
                                   
@@ -50,7 +51,7 @@
                                               {{nestedCustomItemsTreeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
                                             </mat-icon>
                                         </button>
-                                        <i class="fa fa-folder mr-2"></i>{{node.name}}
+                                        <span style="cursor: default"><i class="fa fa-folder mr-2"></i>{{node.name}}</span>
                                         <i style="cursor: pointer;" class="fa fa-pencil ml-2" id="dropdownMenuButton1" ngbDropdownToggle></i>
                                           
                                         
@@ -78,7 +79,7 @@
             <div class="card-body">
               <h4>Default Items</h4>
               <ul style="list-style:none;">
-                <li><i class="fa fa-folder mr-2"></i><span>Items<i [hidden]="!this.isAdmin" style="cursor:pointer" (click)="this.createNewFolder('default', 'item', null)" class="fa fa-plus ml-2"></i></span>
+                <li><i class="fa fa-folder mr-2"></i><span style="cursor: default">Items<i [hidden]="!this.isAdmin || this.defaultRefresh" style="cursor:pointer" (click)="this.createNewFolder('default', 'item', null)" class="fa fa-plus ml-2"></i></span>
                   <div [hidden]="!this.defaultRefresh" class="fa-3x"><i class="fa fa-cog fa-spin"></i></div>
                   <mat-tree [hidden]="this.defaultRefresh" [dataSource]="nestedDefaultItemsDataSource" [treeControl]="nestedDefaultItemsTreeControl" class="example-tree">
                     <mat-tree-node *matTreeNodeDef="let node">
@@ -99,7 +100,7 @@
                                       {{nestedDefaultItemsTreeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
                                     </mat-icon>
                                 </button>
-                                <i class="fa fa-folder mr-2"></i>{{node.name}}
+                                <span style="cursor: default"><i class="fa fa-folder mr-2"></i>{{node.name}}</span>
                                 <i [hidden]="!this.isAdmin" style="cursor: pointer;" class="fa fa-pencil ml-2" id="dropdownMenuButton1" ngbDropdownToggle></i>
                                   
                                 

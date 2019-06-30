@@ -8,7 +8,6 @@ import { HttpClientModule} from '@angular/common/http';
 
 import bootstrap from "bootstrap";
 
-
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NavbarComponent } from './Components/navbar/navbar.component';
 import { SidebarComponent } from './Components/sidebar/sidebar.component';
@@ -43,7 +42,7 @@ import { ItemsComponent } from './Components/items/items.component';
     MatTreeModule,
     MatIconModule,
     MatButtonModule,
-    NgbModule.forRoot()
+    NgbModule.forRoot(),
   ],
   providers: [
     WebService

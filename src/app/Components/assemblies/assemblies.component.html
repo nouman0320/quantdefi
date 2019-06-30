@@ -28,30 +28,61 @@
                     </div>
                   </form>
 
-                <ul style="list-style:none;">
-                  <li>Assemblies
-                        <ul  style="list-style:none;">
-                            <li><i class="fa fa-folder-open mr-2"></i><span style="cursor:pointer;" onclick="alert('folder clicked')">03 00 00 - Concrete</span> <i style="cursor:pointer;" onclick="alert('TEst')" class="fa fa-pencil ml-2"></i>
-                              <ul><i class="fa fa-folder-open mr-2"></i> 03 30 00 - Rebar <i class="fa fa-pencil ml-2"></i>
-                                <li style="list-style:none;"><i class="fa fa-file mr-2"></i> Rebar For Beam - Linear <i class="fa fa-pencil ml-2"></i></li>
-                              </ul>
+                  <ul style="list-style:none;">
+                    <li><i class="fa fa-folder mr-2"></i><span style="cursor: default">Assemblies<i [hidden]="this.customRefresh" style="cursor:pointer" (click)="this.createNewFolder('custom', 'assembly', null)" class="fa fa-plus ml-2"></i></span>
+                      <div [hidden]="!this.customRefresh" class="fa-3x"><i class="fa fa-cog fa-spin"></i></div>
+                      <mat-tree [hidden]="this.customRefresh" [dataSource]="nestedCustomAssembliesDataSource" [treeControl]="nestedCustomAssembliesTreeControl" class="example-tree">
+                        <mat-tree-node *matTreeNodeDef="let node">
+                              <li class="mat-tree-node">
+                                  <button mat-icon-button disabled></button>
+                                  <span style="cursor: pointer;" (click)="openAssembly(node._id)"><i class="fa fa-cube mr-2"></i>{{node.name}}</span>
+                              </li>
+      
+                              
+                        </mat-tree-node>
+                    
+                        <mat-nested-tree-node *matTreeNodeDef="let node; when: hasCustomNestedChild">
+                            <li>
+                                <div ngbDropdown>
+                                <div class="mat-tree-node">
+                                    <button mat-icon-button matTreeNodeToggle>
+                                        <mat-icon class="mat-icon-rtl-mirror">
+                                          {{nestedCustomAssembliesTreeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
+                                        </mat-icon>
+                                    </button>
+                                    <span style="cursor: default"><i class="fa fa-folder mr-2"></i>{{node.name}}</span>
+                                    <i style="cursor: pointer;" class="fa fa-pencil ml-2" id="dropdownMenuButton1" ngbDropdownToggle></i>
+                                      
+                                    
+                                </div>
+                                <ul [class.example-tree-invisible]="!nestedCustomAssembliesTreeControl.isExpanded(node)">
+                                    <ng-container matTreeNodeOutlet></ng-container>
+                                </ul>
+      
+                                <div style="z-index: 999;" ngbDropdownMenu aria-labelledby="dropdownMenuButton1">
+                                    <span (click)="this.createNewFolder('custom', 'assembly', node._id)" class="dropdown-item" style="cursor: pointer;"><i class="fa fa-folder mr-2"></i>New Folder</span>
+                                    <span (click)="createNewAssembly('assembly', node._id, null)" class="dropdown-item" style="cursor: pointer;"><i class="fa fa-cube mr-2"></i>New Assembly</span>
+                                    <div class="dropdown-divider"></div>
+                                    <span (click)="delete_folder(node._id)" class="dropdown-item" style="cursor: pointer;"><i class="fa fa-trash mr-2" ></i>Delete</span>
+                                  </div>
+      
+                              </div>
                             </li>
-                            <li><i class="fa fa-folder mr-2"></i> Folder 2 <i class="fa fa-pencil ml-2"></i></li>
-                            <li><i class="fa fa-folder mr-2"></i> Folder 3 <i class="fa fa-pencil ml-2"></i></li>
-                        </ul>
-                      </li>
-                </ul>
+                        </mat-nested-tree-node>
+                    </mat-tree>
+                    </li>
+                  </ul>
               </div>
           <div class="card-body">
             <h4>Default Assemblies</h4>
             <ul style="list-style:none;">
-              <li><i class="fa fa-folder mr-2"></i><span>Assemblies<i style="cursor:pointer" (click)="this.createNewFolder('default', 'assembly', null)" class="fa fa-plus ml-2"></i></span>
-                <p [hidden]="!this.defaultRefresh">Loading...</p>
+              <li><i class="fa fa-folder mr-2"></i><span style="cursor: default">Assemblies<i [hidden]="!this.isAdmin || this.defaultRefresh" style="cursor:pointer" (click)="this.createNewFolder('default', 'assembly', null)" class="fa fa-plus ml-2"></i></span>
+                <div [hidden]="!this.defaultRefresh" class="fa-3x"><i class="fa fa-cog fa-spin"></i></div>
                 <mat-tree [hidden]="this.defaultRefresh" [dataSource]="nestedDefaultAssembliesDataSource" [treeControl]="nestedDefaultAssembliesTreeControl" class="example-tree">
                   <mat-tree-node *matTreeNodeDef="let node">
                         <li class="mat-tree-node">
                             <button mat-icon-button disabled></button>
-                            <i class="fa fa-cube mr-2"></i>{{node.name}}<i style="cursor: pointer;" class="fa fa-trash ml-2"(click)="delete_item(node._id)"></i>
+                            <span style="cursor: pointer;" (click)="openAssembly(node._id)"><i class="fa fa-cube mr-2"></i>{{node.name}}</span>
                         </li>
 
                         
@@ -66,8 +97,8 @@
                                     {{nestedDefaultAssembliesTreeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
                                   </mat-icon>
                               </button>
-                              <i class="fa fa-folder mr-2"></i>{{node.name}}
-                              <i style="cursor: pointer;" class="fa fa-pencil ml-2" id="dropdownMenuButton1" ngbDropdownToggle></i>
+                              <span style="cursor: default"><i class="fa fa-folder mr-2"></i>{{node.name}}</span>
+                              <i [hidden]="!this.isAdmin" style="cursor: pointer;" class="fa fa-pencil ml-2" id="dropdownMenuButton1" ngbDropdownToggle></i>
                                 
                               
                           </div>
@@ -102,8 +133,8 @@
               <div class="d-flex align-items-center justify-content-center h-100">
                 <div class="d-flex flex-column">
                   <h1 class="display-1 align-self-center p-2"><i class="fa fa-cubes"></i></h1>
-                  <h4 class="display-6 align-self-center p-2">Please select an assembly from the left.</h4>
-
+                  <h4 [hidden]="this.openingAssembly" class="display-6 align-self-center p-2">Please select an assembly from the left.</h4>
+                  <h4 [hidden]="!this.openingAssembly" class="display-6 align-self-center p-2"><div class="fa-6x"><i class="fa fa-cog fa-spin"></i></div></h4>
                 </div>
               </div>
             </header>
@@ -172,13 +203,14 @@
                   Required Items
               </p>
               <div class="col-5 align-self-center">
-                  <button type="submit" class="btn btn-success btn-sm pull-right">Add Item<i class="mdi mdi-plus"></i></button>
+                  <button (click)="openXl(content, 'individual')" type="submit" class="btn btn-success btn-sm pull-right">Add Item<i class="mdi mdi-plus"></i></button>
               </div>
               
           </div>
 
             <div class="table-responsive pt-2">
-                <table class="table table-bordered">
+                <div [hidden]="!this.gettingRequiredItems" class="fa-2x"><i class="fa fa-cog fa-spin"></i></div>
+                <table [hidden]="this.gettingRequiredItems" class="table table-bordered">
                     <thead>
                       <tr>
                         <th>Item Name</th>
@@ -189,19 +221,12 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        <td>Sheet, Epoxy, 4" x 4" W2.0 x W2.0</td>
-                        <td>sq ft</td>
-                        <td>7' x 20' Sheets</td>
-                        <td>119 sq ft = 1 7' x 20' Sheets</td>
-                        <td><button class="btn btn-danger"><i class="fa fa-trash"></i></button></td>
-                      </tr>
-                      <tr>
-                          <td style="white-space: normal">Sheet, Epoxy, 4" xasdasdasdasdasdasasdas 4" W2.0 x W2.0</td>
-                          <td>sq ft</td>
-                          <td>7' x 20' Sheets</td>
-                          <td>119 sq ft = 1 7' x 20' Sheets</td>
-                          <td><button class="btn btn-danger"><i class="fa fa-trash"></i></button></td>
+                      <tr *ngFor="let item of requiredItems; let i = index">
+                          <td style="white-space: normal">{{item.name}}</td>
+                          <td>{{item.item_unit}}</td>
+                          <td>{{item.purchase_unit}}</td>
+                          <td>{{item.coverage_rate_1}} {{item.item_unit}} = {{item.coverage_rate_2}} {{item.purchase_unit}}</td>
+                          <td><button class="btn btn-danger" (click)="deleteRequiredItem(item._id, i)" ><i class="fa fa-trash"></i></button></td>
                         </tr>
                     </tbody>
                   </table>
@@ -220,25 +245,25 @@
                   Item Groups
               </p>
               <div class="col-5 align-self-center">
-                  <button type="submit" class="btn btn-success btn-sm pull-right">Add Group<i class="mdi mdi-plus"></i></button>
+                  <button (click)="addNewItemGroup()" type="submit" class="btn btn-success btn-sm pull-right">Add Group<i class="mdi mdi-plus"></i></button>
               </div>
               
           </div>
 
 
-          <form class="forms-sample ml-3">
+          <form [hidden]="!this.newItemGroup" class="forms-sample ml-3">
 
             <div class="row">
       
                 <div class="col-md-6 form-group">
                   <label for="inputAssemblyName">Name:</label>
                   <div class="row">
-                      <input type="text" class="form-control col-6" id="inputAssemblyName" placeholder="">
+                      <input #groupNameInput type="text" class="form-control col-6" id="inputAssemblyName" placeholder="">
                       <div class="col-1 mr-2">
-                          <button type="submit" class="btn btn-success btn-sm"><i class="fa fa-check"></i></button>
+                          <button (click)="addNewItemGroupConfirm(groupNameInput.value)" type="submit" class="btn btn-success btn-sm"><i class="fa fa-check"></i></button>
                       </div>
                       <div class="col-1 ml-1">
-                          <button type="submit" class="btn btn-danger btn-sm"><i class="fa fa-times"></i></button>
+                          <button (click)="addNewItemGroupCancel()" class="btn btn-danger btn-sm"><i class="fa fa-times"></i></button>
                       </div>
                   </div>
                   
@@ -249,52 +274,28 @@
           </form>
 
 
-            <div class="table-responsive pt-2 mb-3">
+            <div *ngFor="let group of itemGroup; let i = index" class="table-responsive pt-2 mb-3">
                 <table class="table table-bordered">
                     <thead>
                       <tr>
-                        <th>[item name]</th>
+                        <th>{{group.name}}</th>
                         <th>Unit Of Measure</th>
                         <th>Purchase Unit</th>
                         <th>Formula</th>
                         <th></th>
-                        <th><button class="btn btn-danger"><i class="fa fa-trash"></i></button></th>
+                        <th><button (click)="deleteItemGroup(group._id, i)" class="btn btn-danger"><i class="fa fa-trash"></i></button></th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        <td>Sheet, Epoxy, 4" x 4" W2.0 x W2.0</td>
-                        <td>sq ft</td>
-                        <td>7' x 20' Sheets</td>
-                        <td>119 sq ft = 1 7' x 20' Sheets</td>
-                        <td><button class="btn btn-default btn-xs"><i class="fa fa-arrow-down"></i></button><button class="btn btn-default btn-xs ml-2"><i class="fa fa-arrow-up"></i></button></td>
-                        <td><button class="btn btn-danger"><i class="fa fa-trash"></i></button></td>
+                      <tr *ngFor="let item of group.group_items; let j = index">
+                        <td>{{item.name}}</td>
+                        <td>{{item.item_unit}}</td>
+                        <td>{{item.purchase_unit}}</td>
+                        <td>{{item.coverage_rate_1}} {{item.item_unit}} = {{item.coverage_rate_2}} {{item.purchase_unit}}</td>
+                        <td><button [hidden]="(j==(group.group_items.length-1))" (click)="moveItemDown(group._id, item._id, j)" class="btn btn-default btn-xs"><i class="fa fa-arrow-down"></i></button><button [hidden]="(j==0)" (click)="moveItemUp(group._id, item._id, j)" class="btn btn-default btn-xs ml-2"><i class="fa fa-arrow-up"></i></button></td>
+                        <td><button (click)="deleteItemInsideGroup(group._id,item._id,j)" class="btn btn-danger"><i class="fa fa-trash"></i></button></td>
                       </tr>
-                      <td><button class="btn btn-success btn-sm"><i class="mdi mdi-plus"></i> Add</button></td>
-                    </tbody>
-                  </table>
-            </div>
-
-            <div class="table-responsive pt-2">
-                <table class="table table-bordered">
-                    <thead>
-                      <tr>
-                        <th>[item name]</th>
-                        <th>Unit Of Measure</th>
-                        <th>Purchase Unit</th>
-                        <th>Formula</th>
-                        <th><button class="btn btn-danger"><i class="fa fa-trash"></i></button></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>Sheet, Epoxy, 4" x 4" W2.0 x W2.0</td>
-                        <td>sq ft</td>
-                        <td>7' x 20' Sheets</td>
-                        <td>119 sq ft = 1 7' x 20' Sheets</td>
-                        <td><button class="btn btn-danger"><i class="fa fa-trash"></i></button></td>
-                      </tr>
-                      <td><button class="btn btn-success btn-sm"><i class="mdi mdi-plus"></i> Add</button></td>
+                      <td><button (click)="addItemToGroup(content, group._id)" class="btn btn-success btn-sm"><i class="mdi mdi-plus"></i> Add</button></td>
                     </tbody>
                   </table>
             </div>
@@ -314,3 +315,94 @@
       <button (click)="this.cancel_delete()" class="btn btn-light">Cancel</button>
     </div>
   </div>
+
+
+  <ng-template #content let-modal>
+    <div class="modal-header">
+      <h4 class="modal-title">
+
+          <span><i class="fa fa-box-full nudge-right"></i>Add Items</span>
+      
+
+      </h4>
+      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="" style="border-bottom: solid 2px #009841; color: #393939;">My Custom Items</div>
+      <div [hidden]="!this.customModalRefresh" class="fa-2x"><i class="fa fa-cog fa-spin"></i></div>
+      <mat-tree [hidden]="this.customModalRefresh" [dataSource]="nestedCustomItemsModalDataSource" [treeControl]="nestedCustomItemsModalTreeControl" class="example-tree">
+        <mat-tree-node *matTreeNodeDef="let node">
+              <li class="mat-tree-node">
+                  <button mat-icon-button disabled></button>
+                  <span style="cursor: default;"><i class="fa fa-cube mr-2"></i>{{node.name}} <div style="cursor: pointer;" (click)="addRequiredItem(node._id);modal.close('Close click')" class="badge badge-success badge-pill ml-2">Select</div></span>
+              </li>
+
+              
+        </mat-tree-node>
+    
+        <mat-nested-tree-node *matTreeNodeDef="let node; when: hasCustomModalNestedChild">
+            <li>
+                <div class="mat-tree-node">
+                    <button mat-icon-button matTreeNodeToggle>
+                        <mat-icon class="mat-icon-rtl-mirror">
+                          {{nestedCustomItemsModalTreeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
+                        </mat-icon>
+                    </button>
+                    <span style="cursor: default"><i class="fa fa-folder mr-2"></i>{{node.name}}</span>
+                    
+                      
+                    
+                </div>
+                <ul [class.example-tree-invisible]="!nestedCustomItemsModalTreeControl.isExpanded(node)">
+                    <ng-container matTreeNodeOutlet></ng-container>
+                </ul>
+
+  
+            </li>
+        </mat-nested-tree-node>
+    </mat-tree>
+      <div class="" style="border-bottom: solid 2px #009841; color: #393939;">Quantdefi Items</div>
+      <div [hidden]="!this.defaultModalRefresh" class="fa-2x"><i class="fa fa-cog fa-spin"></i></div>
+      <mat-tree [hidden]="this.defaultModalRefresh" [dataSource]="nestedDefaultItemsModalDataSource" [treeControl]="nestedDefaultItemsModalTreeControl" class="example-tree">
+        <mat-tree-node *matTreeNodeDef="let node">
+              <li class="mat-tree-node">
+                  <button mat-icon-button disabled></button>
+                  <span style="cursor: default;"><i class="fa fa-cube mr-2"></i>{{node.name}} <div style="cursor: pointer;" (click)="addRequiredItem(node._id);modal.close('Close click')" class="badge badge-success badge-pill ml-2">Select</div></span>
+              </li>
+
+              
+        </mat-tree-node>
+    
+        <mat-nested-tree-node *matTreeNodeDef="let node; when: hasDefaultModalNestedChild">
+            <li>
+                <div class="mat-tree-node">
+                    <button mat-icon-button matTreeNodeToggle>
+                        <mat-icon class="mat-icon-rtl-mirror">
+                          {{nestedDefaultItemsModalTreeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
+                        </mat-icon>
+                    </button>
+                    <span style="cursor: default"><i class="fa fa-folder mr-2"></i>{{node.name}}</span>
+                    
+                      
+                    
+                </div>
+                <ul [class.example-tree-invisible]="!nestedDefaultItemsModalTreeControl.isExpanded(node)">
+                    <ng-container matTreeNodeOutlet></ng-container>
+                </ul>
+
+  
+            </li>
+        </mat-nested-tree-node>
+    </mat-tree>
+    
+    
+    
+    
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Close</button>
+    </div>
+  </ng-template>
+  

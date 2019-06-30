@@ -20,6 +20,86 @@ export class WebService {
 
   constructor(private http: HttpClient) { }
 
+
+
+  createItemGroup(groupName: String, userId: String, assembly_id: String): Observable<any>{
+    const body = {
+      "name": groupName,
+      "created_by": userId,
+      "assembly_id":assembly_id
+    }
+    let headers = new HttpHeaders();
+    headers = headers.append('Content-Type', 'application/json');
+    return this.http.post(this.baseURL + 'createitemgroup', body,{
+      headers: headers
+    });
+  }
+
+  removeRequiredItem(id: String, parent_id: String, index: any): Observable<any>{
+    const body = {
+      "_id":id,
+      "_parent_id":parent_id,
+      "index":index
+    }
+    let headers = new HttpHeaders();
+    headers = headers.append('Content-Type', 'application/json');
+    return this.http.post(this.baseURL + 'removerequireditem', body,{
+      headers: headers
+    });
+  }
+
+  getRequiredItemForGroup(id: String, group_id: String): Observable<any>{
+    //console.log(id);
+    const body = {
+      "_id":id,
+      "_group_id":group_id
+    }
+    let headers = new HttpHeaders();
+    headers = headers.append('Content-Type', 'application/json');
+    return this.http.post(this.baseURL + 'getrequireditemforgroup', body,{
+      headers: headers
+    });
+  }
+
+
+  getRequiredItem(id: String, parent_id: String): Observable<any>{
+    //console.log(id);
+    const body = {
+      "_id":id,
+      "_parent_id":parent_id
+    }
+    let headers = new HttpHeaders();
+    headers = headers.append('Content-Type', 'application/json');
+    return this.http.post(this.baseURL + 'getrequireditem', body,{
+      headers: headers
+    });
+  }
+
+
+  getGroup(id: String):Observable<any>{
+    console.log(id);
+    const body = {
+      "_id":id
+    }
+    let headers = new HttpHeaders();
+    headers = headers.append('Content-Type', 'application/json');
+    return this.http.post(this.baseURL + 'getgroup', body,{
+      headers: headers
+    });
+  }
+
+  openAssembly(id: String): Observable<any>{
+    console.log(id);
+    const body = {
+      "_id":id
+    }
+    let headers = new HttpHeaders();
+    headers = headers.append('Content-Type', 'application/json');
+    return this.http.post(this.baseURL + 'openassembly', body,{
+      headers: headers
+    });
+  }
+
   openItem(id: String): Observable<any>{
     console.log(id);
     const body = {
